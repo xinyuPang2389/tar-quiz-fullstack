@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>追星女孩精神状态测评</title>
+  <meta name="description" content="基于六轨蓄水池矩阵算法的追星精神状态专业测评，洞察你在舆论、空白期及审判风气下的真实心智防御机制。">
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@300;400;500;700&family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+
+  <style>
+    :root {
+      --bg-warm-gray: #F4F4F4;
+      --text-pine-green: #1C2E24;
+      --card-selected-bg: #DCEBE5;
+      --card-selected-border: #5C7A6D;
+    }
+    body {
+      font-family: 'Outfit', 'Noto Sans SC', sans-serif;
+      background-color: var(--bg-warm-gray);
+      color: var(--text-pine-green);
+      -webkit-tap-highlight-color: transparent;
+      overflow-x: hidden;
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    .fade-transition {
+      transition: opacity 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
+                  transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+    }
+    .fade-out {
+      opacity: 0;
+      transform: translateY(-8px) scale(0.98);
+      pointer-events: none;
+    }
+    .fade-in {
+      opacity: 1;
+      transform: translateY(0) scale(1);
+    }
+    .option-card {
+      transition: all 0.25s cubic-bezier(0.25, 0.8, 0.25, 1);
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    .option-card:active {
+      transform: scale(0.975);
+      background-color: var(--card-selected-bg) !important;
+      border-color: var(--card-selected-border) !important;
+      box-shadow: inset 0 2px 8px rgba(28, 46, 36, 0.06);
+    }
+    .progress-bar-fill {
+      transition: width 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    @keyframes pulse-slow {
+      0%, 100% { opacity: 0.3; transform: scale(0.96); }
+      50%       { opacity: 1;   transform: scale(1.04); }
+    }
+    .pulse-animation { animation: pulse-slow 3s infinite ease-in-out; }
+    .glow-soft { box-shadow: 0 10px 30px -10px rgba(28, 46, 36, 0.08); }
+    .legend-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 6px;
+    }
+    @keyframes bloom {
+      0%   { stroke-dashoffset: 200; opacity: 0; }
+      100% { stroke-dashoffset: 0;   opacity: 1; }
+    }
+    .flower-path {
+      stroke-dasharray: 200;
+      stroke-dashoffset: 200;
+      animation: bloom 2.4s ease forwards;
+      animation-delay: 0.6s;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col justify-between items-center p-4 md:p-8">
+
+  <!-- Header -->
+  <header class="w-full max-w-md text-center mt-4 mb-2">
+    <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-wider uppercase bg-[#E9EFEB] text-[#345242]">
+      Mental State Assessment · EDARNC
+    </span>
+    <h1 class="text-2xl font-bold tracking-tight mt-2 text-[#1C2E24]">追星女孩精神状态测评</h1>
+  </header>
+
+  <main class="w-full max-w-md flex-1 flex flex-col justify-center my-4">
+
+    <!-- ① START SCREEN -->
+    <div id="start-screen" class="fade-transition fade-in bg-white p-8 rounded-3xl glow-soft border border-slate-100 flex flex-col items-center text-center space-y-6">
+      <div class="w-20 h-20 rounded-full bg-[#E9EFEB] flex items-center justify-center text-[#1C2E24]">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 21l8.982-5.563M18 10.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm-3 5.25a6 6 0 01-3.464-1.034 4.5 4.5 0 00-5.071-6.748 5.25 5.25 0 1110.114 0 4.5 4.5 0 00-5.071 6.748L15 15.375z"/>
+        </svg>
+      </div>
+      <p class="text-[#5C6E66] text-sm leading-relaxed px-2">
+        冲浪千百遍，归来仍是局中人。<br>
+        本测评由六轨蓄水池矩阵算法驱动，客观解构你在舆论风向、空白期以及网络审判中的心智防御机制，生成专属 EDARNC 六维精神图谱。
+      </p>
+      <button id="btn-start" class="w-full py-4 bg-[#1C2E24] text-white rounded-2xl font-medium tracking-wide shadow-lg transition-all duration-300 active:scale-95">
+        开启心智探索（共 12 题）
+      </button>
+    </div>
+
+    <!-- ② QUIZ SCREEN -->
+    <div id="quiz-screen" class="hidden w-full space-y-5">
+      <div class="w-full flex items-center justify-between px-2 text-xs font-semibold text-[#5C6E66] tracking-wide">
+        <span id="progress-indicator">第 1 题 / 共 12 题</span>
+        <span id="progress-percent">8%</span>
+      </div>
+      <div class="w-full h-1.5 bg-[#E2EAE6] rounded-full overflow-hidden">
+        <div id="progress-bar-fill" class="progress-bar-fill h-full bg-[#8EA89D] rounded-full" style="width:8%"></div>
+      </div>
+      <div class="relative min-h-[420px] flex items-center justify-center">
+        <div id="question-card" class="fade-transition fade-in w-full bg-white p-7 rounded-3xl glow-soft border border-slate-100 flex flex-col space-y-5">
+          <div class="space-y-2">
+            <span id="q-category" class="inline-block text-[10px] font-bold tracking-widest text-[#8EA89D] uppercase"></span>
+            <h2 id="q-title" class="text-base font-bold leading-snug text-[#1C2E24]"></h2>
+          </div>
+          <div id="options-container" class="space-y-3"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ③ LOADING SCREEN -->
+    <div id="loading-screen" class="hidden bg-white p-10 rounded-3xl glow-soft border border-slate-100 flex flex-col items-center justify-center text-center space-y-8 min-h-[360px]">
+      <div class="relative w-16 h-16 flex items-center justify-center">
+        <div class="absolute inset-0 rounded-full border-[3px] border-[#E9EFEB]"></div>
+        <div class="absolute inset-0 rounded-full border-[3px] border-t-[#8EA89D] border-r-transparent border-b-transparent border-l-transparent animate-spin"></div>
+        <div class="w-8 h-8 rounded-full bg-[#1C2E24]/5 flex items-center justify-center text-[#1C2E24] pulse-animation">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
+          </svg>
+        </div>
+      </div>
+      <div class="space-y-3">
+        <h3 class="text-sm font-semibold tracking-wide text-[#1C2E24]">六轨蓄水池矩阵映射中...</h3>
+        <p class="text-xs text-[#8EA89D] leading-relaxed max-w-[240px] mx-auto animate-pulse">
+          正在生成你的 EDARNC 六维精神图谱，请稍候...
+        </p>
+      </div>
+    </div>
+
+    <!-- ④ RESULT SCREEN -->
+    <div id="report-screen" class="hidden fade-transition fade-in w-full space-y-5">
+
+      <!-- Archetype Header -->
+      <div class="bg-white p-6 rounded-3xl glow-soft border border-slate-100 text-center space-y-1">
+        <span class="text-[10px] font-bold tracking-widest text-[#8EA89D] uppercase">Mental Profile · EDARNC Report</span>
+        <h2 id="report-archetype" class="text-2xl font-extrabold tracking-tight text-[#1C2E24] mt-1"></h2>
+        <p id="report-tagline" class="text-xs text-[#5C6E66]"></p>
+      </div>
+
+      <!-- SVG Illustration -->
+      <div id="report-svg-card" class="bg-white p-5 rounded-3xl glow-soft border border-slate-100 flex items-center justify-center"></div>
+
+      <!-- Radar Chart -->
+      <div class="bg-white p-5 rounded-3xl glow-soft border border-slate-100 space-y-3">
+        <h4 class="text-[10px] font-bold tracking-wider text-[#8EA89D] uppercase text-center">六维精神防御图谱 (EDARNC)</h4>
+        <div class="relative w-full h-[220px] flex items-center justify-center">
+          <canvas id="radarChart"></canvas>
+        </div>
+        <div class="legend-grid mt-1 px-1">
+          <div class="flex items-center gap-1.5 text-[10px] text-[#5C6E66]"><span class="w-2 h-2 rounded-full bg-[#8EA89D] shrink-0"></span><span><b class="text-[#1C2E24]">E</b> 情感羁绊</span></div>
+          <div class="flex items-center gap-1.5 text-[10px] text-[#5C6E66]"><span class="w-2 h-2 rounded-full bg-[#8EA89D] shrink-0"></span><span><b class="text-[#1C2E24]">D</b> 独立解构</span></div>
+          <div class="flex items-center gap-1.5 text-[10px] text-[#5C6E66]"><span class="w-2 h-2 rounded-full bg-[#8EA89D] shrink-0"></span><span><b class="text-[#1C2E24]">A</b> 主动排查</span></div>
+          <div class="flex items-center gap-1.5 text-[10px] text-[#5C6E66]"><span class="w-2 h-2 rounded-full bg-[#8EA89D] shrink-0"></span><span><b class="text-[#1C2E24]">R</b> 坚守抗逆</span></div>
+          <div class="flex items-center gap-1.5 text-[10px] text-[#5C6E66]"><span class="w-2 h-2 rounded-full bg-[#8EA89D] shrink-0"></span><span><b class="text-[#1C2E24]">N</b> 发言防线</span></div>
+          <div class="flex items-center gap-1.5 text-[10px] text-[#5C6E66]"><span class="w-2 h-2 rounded-full bg-[#8EA89D] shrink-0"></span><span><b class="text-[#1C2E24]">C</b> 共鸣渴望</span></div>
+        </div>
+      </div>
+
+      <!-- Analysis -->
+      <div class="bg-white p-5 rounded-3xl glow-soft border border-slate-100 space-y-3">
+        <h4 class="text-xs font-bold text-[#1C2E24] flex items-center gap-1.5">
+          <svg class="w-3.5 h-3.5 text-[#8EA89D]" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+          </svg>
+          灵魂解构
+        </h4>
+        <p id="report-description" class="text-xs text-[#5C6E66] leading-relaxed whitespace-pre-line"></p>
+      </div>
+
+      <!-- API Status -->
+      <div class="p-3 bg-[#E9EFEB] text-[#345242] rounded-xl text-[11px] flex items-center justify-between">
+        <span class="font-medium flex items-center gap-1">
+          <span class="w-1.5 h-1.5 rounded-full bg-[#8EA89D] inline-block animate-ping"></span>
+          数据接口同步就绪
+        </span>
+        <span id="api-status-text" class="opacity-70 font-mono text-[10px]">Payload: []</span>
+      </div>
+
+      <!-- Buttons -->
+
+<!-- ★ 反馈模块 ── 插在按钮组 div 正上方 -->
+<div id="feedback-module" class="bg-white p-5 rounded-3xl glow-soft border border-slate-100 space-y-4 fade-transition fade-in">
+
+  <!-- 标题 -->
+  <p class="text-[10px] font-bold tracking-widest text-[#8EA89D] uppercase text-center">
+    这份诊断卡 · 准确吗？
+  </p>
+
+  <!-- 气泡按钮组 -->
+  <div class="flex justify-center gap-4">
+    <button
+      id="fb-accurate"
+      onclick="handleFeedbackBubble('accurate')"
+      class="feedback-bubble flex flex-col items-center gap-1.5 px-5 py-3 rounded-2xl border border-[#8EA89D]/40 bg-[#FAFAFA] text-[#1C2E24] text-xs font-medium transition-all duration-200 active:scale-95"
+    >
+      <span class="text-xl">🌲</span>
+      <span>精准看穿</span>
+    </button>
+    <button
+      id="fb-off"
+      onclick="handleFeedbackBubble('off')"
+      class="feedback-bubble flex flex-col items-center gap-1.5 px-5 py-3 rounded-2xl border border-[#8EA89D]/40 bg-[#FAFAFA] text-[#1C2E24] text-xs font-medium transition-all duration-200 active:scale-95"
+    >
+      <span class="text-xl">🌧️</span>
+      <span>有些偏差</span>
+    </button>
+  </div>
+
+  <!-- 文字输入行 -->
+  <div class="flex gap-2 items-center">
+    <input
+      id="fb-text"
+      type="text"
+      maxlength="100"
+      placeholder="在这里留下你的追星碎碎念或反馈吧..."
+      class="flex-1 px-3 py-2.5 text-xs rounded-xl border border-[#E2EAE6] bg-[#FAFAFA] text-[#1C2E24] placeholder-[#B0BFB8] outline-none focus:border-[#8EA89D] transition-colors duration-200"
+    />
+    <button
+      onclick="submitFeedback(currentFeedbackType, document.getElementById('fb-text').value)"
+      class="px-4 py-2.5 bg-[#1C2E24] text-white text-xs font-medium rounded-xl active:scale-95 transition-transform shrink-0"
+    >
+      提交
+    </button>
+  </div>
+
+  <!-- 成功提示（默认隐藏） -->
+  <p id="fb-success" class="hidden text-center text-xs text-[#5C7A6D] font-medium py-1 fade-transition">
+    收到啦，感谢你和我在同一个时空共鸣。
+  </p>
+
+</div>
+<!-- ★ 反馈模块结束 -->
+      <div class="grid grid-cols-2 gap-3 pb-4">
+        <button id="btn-restart" class="py-3 px-4 bg-[#FAFAFA] text-[#1C2E24] border border-[#E2EAE6] rounded-xl text-xs font-medium tracking-wide active:scale-95 transition-transform">
+          重新测试
+        </button>
+        <button id="btn-save" class="py-3 px-4 bg-[#1C2E24] text-white rounded-xl text-xs font-medium tracking-wide flex items-center justify-center gap-1.5 active:scale-95 transition-transform">
+          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+          </svg>
+          保存诊断卡
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="w-full text-center text-[10px] text-[#8EA89D] font-medium tracking-wider mb-2 mt-2">
+    POWERED BY RESERVOIR ALGORITHM · EDARNC v1.0 &copy; 2026
+  </footer>
+
+  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 px-4 py-2.5 bg-black/80 backdrop-blur-md text-white rounded-full text-xs font-medium tracking-wide opacity-0 transition-opacity duration-300 pointer-events-none z-50">提示</div>
+
+<script>
+// ═══════════════════════════════════════════════════════════════
+// 《追星女孩精神状态测评》前端通信层 — 完整版
+// 对接后端：http://localhost:8080/api/quiz/submit
+//           http://localhost:8080/api/quiz/feedback
+// ═══════════════════════════════════════════════════════════════
+
+const API_BASE = 'http://localhost:8080/api/quiz';
+
+// ─────────────────────────────────────────────────────────────
+// 1. QUIZ DATA（保持原样，完整 12 题）
+// ─────────────────────────────────────────────────────────────
+const QUIZ_DATA = [
+  {
+    id: 1, axis: 'E',
+    dimension: '情感羁绊维度 (E — Emotional Bond)',
+    title: '在网络上刷到对你关注的团体大面积的负面舆论或作品吐槽时：',
+    options: [
+      { key: 'A', score: 1, text: '快速划走，假装这些舆论不存在。别人的想法不值得影响我，用这种方式来保持自己单纯的快乐。' },
+      { key: 'B', score: 2, text: '保持理智，并不参与争论。认为很多时候有些槽点确实存在，自己心里清楚是怎么回事就行，或者顶多跟着吐槽几句来消解内耗。' },
+      { key: 'C', score: 3, text: '由于对偶像有着绝对的信任，认为网络上所有负面的吐槽全都是带有恶意的纯黑言论。内心的底线被瞬间触发，绝不保持沉默，会去反击。' }
+    ]
+  },
+  {
+    id: 2, axis: 'D',
+    dimension: '独立解构维度 (D — Deconstruction)',
+    title: '当面临关注的团队进入长空白期，或者当前市场上层出不穷的新团体、新风格时：',
+    options: [
+      { key: 'A', score: 1, text: '保持散客心态。觉得当下的舞台更像是高度商品化的精致外壳，无论是刚入圈的纯舞台赏味，还是看透之后的边缘守护，都选择到处看看作品，以此保持与这个圈层的弱连接。' },
+      { key: 'B', score: 2, text: '主动寻找其他优秀的舞台作品作为消遣、或转战其他娱乐圈层、亦或是选择入坑并关注新的团体，具备极强的情感分流与迁移能力。' },
+      { key: 'C', score: 3, text: '枯守最初的喜好。外面再热闹也只是看个热闹，坚守内心唯一的底线，绝对不轻易转换关注焦点。' }
+    ]
+  },
+  {
+    id: 3, axis: 'N',
+    dimension: '发言防线维度 (N — Network Defense)',
+    title: '在当前的追星大网络环境里，如果当你频繁察觉到圈层内部充斥着大量用潜台词暗暗内涵、针对不同观点的审判风气时，你最本能的自处方式是：',
+    options: [
+      { key: 'A', score: 1, text: '情绪上虽然会有波澜与不平，但理智会将其转化为原则性的坚守。不仅不打算因为这种风气而选择失语，相反，会更坦然、更坚定地保持自己原有的观点表达或正面纠偏，用清醒的声量去抵抗这种隐晦的负面磁场。' },
+      { key: 'B', score: 2, text: '看透了这种由于言论对立带来的社交流变与虚无本质。在日常中会更加审慎地收拢自己的防线，不公开表达看法，只在极少数频率高度契合的空间里，与同好进行高频的双向观点互动。' },
+      { key: 'C', score: 3, text: '觉得这种网络审判极其莫名其妙与无聊。面对这类风气习惯性默默冷处理，彻底关闭接收源，专注现实生活，不在公共网络平台发表任何相关观点。' }
+    ]
+  },
+  {
+    id: 4, axis: 'E',
+    dimension: '情感韧性维度 (E — Emotional Resilience)',
+    title: '当突然面临曾经很喜欢的偶像发生了大环境判定中无法原谅的错误，导致你瞬间产生退坑、幻灭的心态时：',
+    options: [
+      { key: 'A', score: 1, text: '理智瞬间战胜感性。能够立刻切断情感习惯，以极高的行动力迅速退坑，不为已经崩塌的包装消耗任何现生精力。' },
+      { key: 'B', score: 3, text: '内心感到极度强烈的痛苦、委屈与被背叛感。无法做到立刻抽离，需要花费相当长的时间和精神成本去消解、接受这段情感轨迹的无常。' },
+      { key: 'C', score: 2, text: '不想过多去深究对错或资本公关的本质。选择不留任何痕迹地默默退回现实生活，让这段记忆自然风化，不再为网络世界消耗情绪。' }
+    ]
+  },
+  {
+    id: 5, axis: 'C',
+    dimension: '共鸣渴望维度 (C — Connection Craving)',
+    title: '在一些无需表露任何日常现实身份的野生、隐秘讨论空间里，当你偶然刷到一条跟你内心想法极度契合、一针见血的深度发言时，你的下意识举动是：',
+    options: [
+      { key: 'A', score: 3, text: '非常享受这种纯粹在逻辑和智力上产生的强烈共鸣感，会忍不住在评论区与对方保持高频的双向观点互动。' },
+      { key: 'B', score: 2, text: '默默在心里点个赞，产生一种同频的亲近感，但自己的防御机制会克制住发言欲望，不主动发起深度探讨。' },
+      { key: 'C', score: 1, text: '觉得对方说得有道理，但内心的追星认知极其独立，不需要通过他人的观点来佐证或满足自我认同，习惯性直接划走。' }
+    ]
+  },
+  {
+    id: 6, axis: 'R',
+    dimension: '坚守抗逆维度 (R — Resistance)',
+    title: '面对网络上那些专注于自己的一方自留地、绝不参与任何大字报或立场辩论、谨言慎行的独立追星者，你的真实态度通常是：',
+    options: [
+      { key: 'A', score: 3, text: '感到高度的认同与羡慕，认为在人际网络关系流变剧烈的环境里，这才是最舒适、最安全的精神自处状态。' },
+      { key: 'B', score: 2, text: '觉得这样虽然安全，但未免有些过于漂泊。追星适当的时候还是需要一些同频的双向互动来驱散偶尔的孤独。' },
+      { key: 'C', score: 1, text: '并没有过多的看法和心理波澜。每个人混圈和处理现实关系的方式不同，专注自家的物料即可。' }
+    ]
+  },
+  {
+    id: 7, axis: 'A',
+    dimension: '主动排查维度 (A — Active Audit)',
+    title: '当看到公开公共平台上的同好为了维护偶像的公共形象，而发起大规模、一致对外的控评或对立辩论时，你最日常的真实心态是：',
+    options: [
+      { key: 'A', score: 2, text: '能够理解这是大环境高压下的防御性手段。如果局势确实到了非常危急的时刻，自己为了保护偶像或圈层，也会适度关注甚至参与。' },
+      { key: 'B', score: 1, text: '感到些许理智上的幻灭。认为这种过于机械化的商品化操作消解了艺术舞台本身的魅力，会让自己的滤镜变淡，选择保持距离。' },
+      { key: 'C', score: 3, text: '纯粹将其作为这个娱乐工业体系下的一种普遍生态现象来看待，不抱有任何批判，也不产生任何想要加入的冲动。' }
+    ]
+  },
+  {
+    id: 8, axis: 'D',
+    dimension: '独立解构维度 (D — Deconstruction Output)',
+    title: '在一些相对安全、可以发表真实看法的空间里，你认为自己极少数的输出和表达动力，主要来自于：',
+    options: [
+      { key: 'A', score: 3, text: '纯粹是遇到了一些在专业逻辑上或者工业流水线感太强的作品细节，想要用清冷理性的文字去拆解和探讨它。' },
+      { key: 'B', score: 2, text: '刷到了大环境由于偏见而产生的不公、或者是同好被连累的委屈，想要说出客观的大实话，和频率相同的搭子共享共鸣。' },
+      { key: 'C', score: 1, text: '极少有任何输出的动力。相比于表达，自己深刻明白言多必失的道理，更倾向于做一个默默获取信息的倾听者。' }
+    ]
+  },
+  {
+    id: 9, axis: 'N',
+    dimension: '发言防线维度 (N — Network Expression)',
+    title: '当你在日常追星过程中，产生了一些关于舞台、作品或者圈内事件的强烈个人看法或即时情绪时，你通常会如何安置这些想法？',
+    options: [
+      { key: 'A', score: 2, text: '发布在公开的公共平台或大号上：主要用来分享安利、同步官方的日常或进行作品打卡，但通常只聊作品本身，绝不在这里夹带现实隐私。' },
+      { key: 'B', score: 1, text: '发布在无需表露现实身份的野生讨论空间：比较享受在隐秘、没有现生熟人的地方，去寻找那些能和自己产生逻辑共鸣的同频表达，或者和合得来的搭子进行观点的双向高频互动。' },
+      { key: 'C', score: 3, text: '更习惯在心里默默消化或记录在私密的备忘录、草稿箱中：觉得追星纯粹是自己的精神自留地，网络大环境过于浮躁，自己看完物料心里明白就行，完全不想在网络上进行任何表达。' }
+    ]
+  },
+  {
+    id: 10, axis: 'C',
+    dimension: '共鸣渴望维度 (C — Connection Response)',
+    title: '当得知网络上某位平时发言理智深刻、你内心很赞同的同频博主，因为发表了大实话而正在被大面积针对、挂黑或排挤时：',
+    options: [
+      { key: 'A', score: 3, text: '感到原则性共鸣与不平。即使平时在网上再怎么谨言慎行，此时也会默默去给对方点个赞，表示无声的微弱支持。' },
+      { key: 'B', score: 2, text: '内心深感共鸣，但眼前的审判让你感到大环境确实过于浮躁与不可理喻。在共鸣遭到现实敲打的幻灭感下，你叹一口气，从此在网络上更加审慎地收拢自己的防线，进一步高筑发言防壁，不让自己陷入无谓的内耗。' },
+      { key: 'C', score: 1, text: '理智上觉得这就是网络人际流变的常态。为了不影响自己现实生活的平静和追星体验，选择默默划走，不让负面磁场污染自己。' }
+    ]
+  },
+  {
+    id: 11, axis: 'A',
+    dimension: '主动排查维度 (A — Active Surveillance)',
+    title: '你有多频繁地去主动排查或视奸那些你平时在立场上完全不合、或者发言极其离谱的特定群体博主？',
+    options: [
+      { key: 'A', score: 1, text: '几乎从不。拉黑、屏蔽和完全忽略是唯一的动作，多看一眼都是对自我现实生活精神精力的严重消耗。' },
+      { key: 'B', score: 2, text: '偶尔。当大环境发生不可逆的重大争议事件，或者隐约感觉到某些舆论的风向可能已经波及到了自己核心的底线时，会顺藤摸瓜去暗中排查一下。' },
+      { key: 'C', score: 3, text: '较为频繁。习惯于掌握一套不留痕迹的排查与围观方式，保持知己知彼，以此来清醒评估大环境的整体安全风向。' }
+    ]
+  },
+  {
+    id: 12, axis: 'R',
+    dimension: '坚守抗逆维度 (R — Relationship Boundary)',
+    title: '回望自己长期的追星历程，面对大环境里高频的人际网络流变（如很多同好断崖式淡化、离开），你现在的网络交友边界是：',
+    options: [
+      { key: 'A', score: 3, text: '彻底看透。深知网络因偶结缘的脆弱性，不再热衷于在网上交深心的朋友，保持极高的防线，只找高契合度但无需交心的短暂搭子。' },
+      { key: 'B', score: 2, text: '虽然本能地设立了安全的防线，但如果对方的逻辑和观点和自己极度同频，依然对高质量、高频的双向观点互动保有长期的渴望。' },
+      { key: 'C', score: 1, text: '顺其自然。合则来，不合则散。网络世界真真假假，现实生活和本命的艺术舞台才是自己唯一的长久重心。' }
+    ]
+  }
+];
+
+// ─────────────────────────────────────────────────────────────
+// 2. SVG ILLUSTRATIONS（与后端解耦，仍由前端按 svgType 渲染）
+// ─────────────────────────────────────────────────────────────
+const SVG_MAP = {
+  wall: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 160" width="100%" height="160">
+    <rect width="280" height="160" rx="16" fill="#F8FAFA"/>
+    <rect x="10"  y="118" width="54" height="20" rx="3" fill="none" stroke="#8EA89D" stroke-width="1.5"/>
+    <rect x="70"  y="118" width="54" height="20" rx="3" fill="none" stroke="#8EA89D" stroke-width="1.5"/>
+    <rect x="130" y="118" width="54" height="20" rx="3" fill="none" stroke="#8EA89D" stroke-width="1.5"/>
+    <rect x="190" y="118" width="54" height="20" rx="3" fill="none" stroke="#8EA89D" stroke-width="1.5"/>
+    <rect x="250" y="118" width="22" height="20" rx="3" fill="none" stroke="#8EA89D" stroke-width="1.5"/>
+    <rect x="10"  y="96"  width="38" height="20" rx="3" fill="none" stroke="#6E9BA5" stroke-width="1.5"/>
+    <rect x="54"  y="96"  width="54" height="20" rx="3" fill="none" stroke="#6E9BA5" stroke-width="1.5"/>
+    <rect x="114" y="96"  width="54" height="20" rx="3" fill="none" stroke="#6E9BA5" stroke-width="1.5"/>
+    <rect x="174" y="96"  width="54" height="20" rx="3" fill="none" stroke="#6E9BA5" stroke-width="1.5"/>
+    <rect x="234" y="96"  width="38" height="20" rx="3" fill="none" stroke="#6E9BA5" stroke-width="1.5"/>
+    <rect x="10"  y="74"  width="54" height="20" rx="3" fill="none" stroke="#8EA89D" stroke-width="1.5"/>
+    <rect x="70"  y="74"  width="54" height="20" rx="3" fill="none" stroke="#8EA89D" stroke-width="1.5"/>
+    <rect x="130" y="74"  width="54" height="20" rx="3" fill="none" stroke="#8EA89D" stroke-width="1.5"/>
+    <rect x="190" y="74"  width="54" height="20" rx="3" fill="none" stroke="#8EA89D" stroke-width="1.5"/>
+    <rect x="250" y="74"  width="22" height="20" rx="3" fill="none" stroke="#8EA89D" stroke-width="1.5"/>
+    <rect x="10"  y="52"  width="38" height="20" rx="3" fill="#DCEBE5" stroke="#8EA89D" stroke-width="1.5"/>
+    <rect x="54"  y="52"  width="54" height="20" rx="3" fill="#DCEBE5" stroke="#8EA89D" stroke-width="1.5"/>
+    <rect x="114" y="52"  width="54" height="20" rx="3" fill="#DCEBE5" stroke="#8EA89D" stroke-width="1.5"/>
+    <rect x="174" y="52"  width="54" height="20" rx="3" fill="#DCEBE5" stroke="#8EA89D" stroke-width="1.5"/>
+    <rect x="234" y="52"  width="38" height="20" rx="3" fill="#DCEBE5" stroke="#8EA89D" stroke-width="1.5"/>
+    <path stroke-dasharray="200" stroke-dashoffset="200"
+      style="animation:bloom 2.4s ease 0.6s forwards"
+      d="M140 140 L140 102" stroke="#D4A8A0" stroke-width="1.2" stroke-linecap="round" fill="none"/>
+    <circle cx="140" cy="102" r="2.5" fill="#D4A8A0" opacity="0.85"/>
+    <text x="140" y="152" text-anchor="middle" font-family="'Noto Sans SC',sans-serif"
+      font-size="9" fill="#8EA89D" letter-spacing="2">防 线 之 后 的 温 柔</text>
+  </svg>`,
+  default: `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 160" width="100%" height="160">
+    <rect width="280" height="160" rx="16" fill="#F8FAFA"/>
+    <circle cx="140" cy="72" r="38" fill="none" stroke="#8EA89D" stroke-width="1.5" stroke-dasharray="5 4"/>
+    <polygon points="140,42 162,68 154,98 126,98 118,68" fill="none" stroke="#8EA89D" stroke-width="1.5"/>
+    <circle cx="140" cy="72" r="11" fill="#DCEBE5" stroke="#5C7A6D" stroke-width="1.5"/>
+    <text x="140" y="148" text-anchor="middle" font-family="'Noto Sans SC',sans-serif"
+      font-size="9" fill="#8EA89D" letter-spacing="2">EDARNC · 精 神 图 谱</text>
+  </svg>`
+};
+
+function getSVG(svgType) {
+  return SVG_MAP[svgType] || SVG_MAP['default'];
+}
+
+// ─────────────────────────────────────────────────────────────
+// 3. DOM REFERENCES
+// ─────────────────────────────────────────────────────────────
+const startScreen    = document.getElementById('start-screen');
+const quizScreen     = document.getElementById('quiz-screen');
+const loadingScreen  = document.getElementById('loading-screen');
+const reportScreen   = document.getElementById('report-screen');
+
+const btnStart   = document.getElementById('btn-start');
+const btnRestart = document.getElementById('btn-restart');
+const btnSave    = document.getElementById('btn-save');
+
+const progressIndicator = document.getElementById('progress-indicator');
+const progressPercent   = document.getElementById('progress-percent');
+const progressBarFill   = document.getElementById('progress-bar-fill');
+
+const questionCard     = document.getElementById('question-card');
+const qCategory        = document.getElementById('q-category');
+const qTitle           = document.getElementById('q-title');
+const optionsContainer = document.getElementById('options-container');
+
+const reportArchetype   = document.getElementById('report-archetype');
+const reportTagline     = document.getElementById('report-tagline');
+const reportDescription = document.getElementById('report-description');
+const apiStatusText     = document.getElementById('api-status-text');
+const reportSvgCard     = document.getElementById('report-svg-card');
+const toast             = document.getElementById('toast');
+
+// ─────────────────────────────────────────────────────────────
+// 4. 全局状态
+// ─────────────────────────────────────────────────────────────
+let currentQuestionIndex = 0;
+
+// 每次答题记录 { score(数字), key(字母), axis }
+let userAnswers = [];
+
+let radarChartInstance = null;
+
+// ★ UUID 锁定（单次测评生命周期内保持不变）
+let sessionUUID = null;
+
+// ─────────────────────────────────────────────────────────────
+// 5. UUID 工具
+// ─────────────────────────────────────────────────────────────
+function generateUUID() {
+  if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+    return crypto.randomUUID();
+  }
+  // 降级 polyfill（兼容旧浏览器）
+  return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+    const r = Math.random() * 16 | 0;
+    return (c === 'x' ? r : (r & 0x3 | 0x8)).toString(16);
+  });
+}
+
+// ─────────────────────────────────────────────────────────────
+// 6. 按钮事件绑定
+// ─────────────────────────────────────────────────────────────
+btnStart.addEventListener('click', startQuiz);
+btnRestart.addEventListener('click', restartQuiz);
+btnSave.addEventListener('click', () => alert('截图即可长按保存 📸'));
+
+// ─────────────────────────────────────────────────────────────
+// 7. 答题流程
+// ─────────────────────────────────────────────────────────────
+function startQuiz() {
+  // ★ 进入答题前锁定本次会话 UUID
+  sessionUUID = generateUUID();
+  console.log('[Quiz] Session UUID locked:', sessionUUID);
+
+  startScreen.classList.add('fade-out');
+  setTimeout(() => {
+    startScreen.classList.add('hidden');
+    quizScreen.classList.remove('hidden');
+    currentQuestionIndex = 0;
+    userAnswers = [];
+    renderQuestion();
+  }, 400);
+}
+
+function renderQuestion() {
+  const q     = QUIZ_DATA[currentQuestionIndex];
+  const total = QUIZ_DATA.length;
+  const pct   = Math.round(((currentQuestionIndex + 1) / total) * 100);
+
+  progressIndicator.textContent = `第 ${currentQuestionIndex + 1} 题 / 共 ${total} 题`;
+  progressPercent.textContent   = `${pct}%`;
+  progressBarFill.style.width   = `${pct}%`;
+
+  questionCard.classList.remove('fade-in');
+  questionCard.classList.add('fade-out');
+
+  setTimeout(() => {
+    qCategory.textContent = q.dimension;
+    qTitle.textContent    = q.title;
+    optionsContainer.innerHTML = '';
+
+    q.options.forEach(opt => {
+      const btn = document.createElement('button');
+      btn.className = 'option-card w-full text-left p-4 rounded-2xl bg-[#FAFAFA] border border-[#8EA89D]/40 text-xs leading-relaxed flex items-start gap-3 text-[#1C2E24]';
+      btn.innerHTML = `
+        <span class="w-5 h-5 rounded-full bg-[#E9EFEB] text-[#345242] flex items-center justify-center font-bold text-[10px] shrink-0 mt-0.5">${opt.key}</span>
+        <span class="font-medium pr-1">${opt.text}</span>`;
+      // ★ 同时记录数字分值 + 字母选项
+      btn.addEventListener('click', () => handleAnswer(opt.score, opt.key, q.axis));
+      optionsContainer.appendChild(btn);
+    });
+
+    questionCard.classList.remove('fade-out');
+    questionCard.classList.add('fade-in');
+  }, 250);
+}
+
+function handleAnswer(score, key, axis) {
+  // ★ 追踪完整轨迹：数字分值 + 字母选项
+  userAnswers.push({ score, key, axis });
+
+  if (currentQuestionIndex < QUIZ_DATA.length - 1) {
+    currentQuestionIndex++;
+    setTimeout(renderQuestion, 220);
+  } else {
+    setTimeout(showLoadingAndSubmit, 220);
+  }
+}
+
+function showLoadingAndSubmit() {
+  quizScreen.classList.add('fade-transition', 'fade-out');
+  setTimeout(() => {
+    quizScreen.classList.add('hidden');
+    loadingScreen.classList.remove('hidden');
+    // 给 loading 动画至少 1.2 秒展示时间，随后发起请求
+    setTimeout(() => submitAnswers(), 1200);
+  }, 400);
+}
+
+// ─────────────────────────────────────────────────────────────
+// 8. ★ 核心通信层：POST /api/quiz/submit
+// ─────────────────────────────────────────────────────────────
+// ✨ 极客主设计师专属：全栈联动 + 离线单机双通道自适应提交逻辑
+async function submitAnswers() {
+    // 1. 获取或生成用户在前端的唯一特征码 (UUID)
+    const userUuid = localStorage.getItem('user_uuid') || crypto.randomUUID();
+    localStorage.setItem('user_uuid', userUuid);
+
+    // 精准对齐你原本的 userAnswers 变量名
+    const answersPayload = userAnswers.map(a => a.score);
+    const optionsPayload = userAnswers.map(a => a.key);
+
+    // ── 🛠️ 备用通道：离线单机版计算大脑（关机或断网时自动触发） ────────
+    const runLocalFallback = () => {
+        console.warn("⚠️ 远程Java城堡已断电，正在启动前端单机版大脑为您算分...");
+
+        // 简易六维轴判定逻辑（和后端状态机算法严格对齐）
+        const axisMap = ["E", "D", "N", "E", "C", "R", "A", "D", "N", "C", "A", "R"];
+        const axisScores = { E:[], D:[], A:[], R:[], N:[], C:[] };
+        answersPayload.forEach((score, i) => { axisMap[i] && axisScores[axisMap[i]].push(score); });
+
+        const edarnc = {};
+        Object.keys(axisScores).forEach(axis => {
+            const arr = axisScores[axis];
+            edarnc[axis] = arr.length ? Math.round(arr.reduce((a,b)=>a+b,0) / (arr.length * 3) * 100) : 50;
+        });
+
+        // 触发你的备用经典追星人格结果文案
+        const fallbackArchetype = {
+            id: 7,
+            name: "「共鸣猎手连接者」",
+            tagline: "在茫茫人海中，寻找那个频率完全相同的灵魂",
+            description: "这是由前端单机芯片为您计算出的结果。触发这个结果的你，对高质量的智识共鸣有着近乎本能的渴望与敏锐嗅觉..."
+        };
+
+        // 渲染前端结果页
+        showResultPage({ edarnc, archetype: fallbackArchetype, user_uuid: userUuid });
+    };
+
+    // ── 🚀 主通道：全力轰击你的免安装原生 SSH 隧道 ──────────────────────
+    // 💡 已经将你的最新专属公网网址完美注入
+// 💡 工业级规范：使用相对路径！无论在谁的电脑上跑，前端都会自动对齐后端的 8080 电闸
+const tunnelUrl = window.location.origin;
+
+    try {
+        const response = await fetch(`${tunnelUrl}/api/quiz/submit`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ user_uuid: userUuid, answers: answersPayload, options: optionsPayload })
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+            console.log("🎯 成功连通公网Java大脑！数据已安全落盘MySQL！", data);
+            showResultPage(data); // 使用后端状态机精准渲染
+        } else {
+            // 服务器返回非200（比如500报错），切回单机离线版
+            runLocalFallback();
+        }
+    } catch (error) {
+        // 网络不通或者你关电脑了，直接无缝切回单机离线版，绝不弹窗报错！
+        runLocalFallback();
+    }
+}
+
+// ─────────────────────────────────────────────────────────────
+// 9. ★ 渲染函数 A：使用后端 JSON 数据渲染结果页
+// ─────────────────────────────────────────────────────────────
+function renderReportFromServer(data) {
+  // 后端返回结构：{ archetype: { name, tagline, description }, edarnc: { E,D,A,R,N,C } }
+  const arch   = data.archetype || {};
+  const scores = data.edarnc    || {};
+
+  reportArchetype.textContent   = arch.name        || '—';
+  reportTagline.textContent     = arch.tagline      || '';
+  reportDescription.textContent = arch.description  || '';
+
+  // SVG：后端暂不返回 svgType，根据人格名关键词映射
+  reportSvgCard.innerHTML = getSVGByArchetypeName(arch.name || '');
+
+  apiStatusText.textContent = `✓ 后端响应 · UUID ${sessionUUID.slice(0,8)}...`;
+
+  // 切换到结果页
+  showReportScreen();
+
+  // 雷达图数据来自后端
+  drawRadarChart(
+    scores.E ?? 50,
+    scores.D ?? 50,
+    scores.A ?? 50,
+    scores.R ?? 50,
+    scores.N ?? 50,
+    scores.C ?? 50
+  );
+}
+
+// SVG 关键词映射（后端未返回 svgType 时的前端降级）
+function getSVGByArchetypeName(name) {
+  if (name.includes('筑墙')) return getSVG('wall');
+  return getSVG('default');
+}
+
+// ─────────────────────────────────────────────────────────────
+// 10. 渲染函数 B：离线降级 —— 本地六轨状态机（与后端逻辑镜像）
+// ─────────────────────────────────────────────────────────────
+const LOCAL_ARCHETYPES = [
+  { id:1,  name:'「纯粹舞台赏味人」', tagline:'以轻盈之姿，守护对美的纯粹感知', svgType:'default',
+    desc:'你是这个浮躁时代里最清醒的一批观众。你把舞台本身当成唯一的坐标系，从不在意任何圈外的喧嚣与评判。你具备极强的情感边界感，能在任何风浪中保持对艺术本身的清冷审美距离，不被任何群体性情绪裹挟。' },
+  { id:2,  name:'「清醒高防筑墙人」', tagline:'用最高的防线，守护最深的温柔', svgType:'wall',
+    desc:'触发这个结果的你，拥有着这个疯狂时代里最让人动容的别别扭扭与温柔。你深深看透了网络大环境人际网络流变的脆弱本质，所以你高筑了防线（高N），在日常中极度谨言慎行、克制、自我约束，绝不轻易交付现生的软肋。\n\n但你绝不是没有感情的冷酷机器。相反，你把那份极其深沉、高敏感的深情羁绊（高E），当成一朵脆弱的小花，小心翼翼地藏在了这堵坚存的高墙最深处，用理智悉心呵护着它。' },
+  { id:3,  name:'「情感深井守护者」', tagline:'深情是天赋，也是最难跨越的护城河', svgType:'default',
+    desc:'你拥有这个圈层里最深、最重、最难被轻易消解的情感羁绊。一旦认定，便是全情投入的长期主义者。你对偶像有着近乎本能的绝对信任，当这份信任被外界质疑时，你会瞬间感受到强烈的情感波动。' },
+  { id:4,  name:'「理智冷静解构师」', tagline:'用清醒的手术刀，解剖娱乐工业的精致谎言', svgType:'default',
+    desc:'你是这个圈层里最冷静的观察者与思考者。你具备极强的独立解构能力，能够穿透商品化包装的精致外壳，用理性的视角去审视舞台背后的工业逻辑。' },
+  { id:5,  name:'「游牧散客漫游人」', tagline:'哪里有好舞台，哪里就是故乡', svgType:'default',
+    desc:'你是这个圈层里最自由、最轻盈的存在。你不执着于任何单一的团体或偶像，而是以一种高度流动的美学视角，游走在不同的舞台之间，汲取每一处的养分。' },
+  { id:6,  name:'「铁血坚守忠诚军」', tagline:'外面再热闹，也只是别人的烟火', svgType:'default',
+    desc:'你是这个时代里最难得的长情主义者。无论圈层如何变迁、新团体如何涌现，你始终坚守着自己最初的选择。这种坚守不是固执，而是一种深刻的价值认同。' },
+  { id:7,  name:'「共鸣猎手连接者」', tagline:'在茫茫人海中，寻找那个频率完全相同的灵魂', svgType:'default',
+    desc:'你对高质量的智识共鸣有着近乎本能的渴望与敏锐嗅觉。你能精准地识别出那些与你逻辑同频的声音，并愿意主动建立深度的双向互动。' },
+  { id:8,  name:'「低调观察潜伏者」', tagline:'最深沉的参与，是永远不留下任何痕迹', svgType:'default',
+    desc:'你是这个圈层里最神秘、最难被定义的存在。你对外界的一切信息保持着高度敏锐的感知力，却极少将任何内心想法转化为可被他人观察到的公开行为。' },
+  { id:9,  name:'「独立王国建造者」', tagline:'最豪华的精神宫殿，只有一把钥匙', svgType:'default',
+    desc:'你在内心建造了一座只属于自己的精神王国。你不需要他人的认同来佐证自己对偶像的热爱，你的追星体验是极其私密、完整且自洽的。' },
+  { id:10, name:'「原则卫士纠偏者」', tagline:'清醒是一种选择，发声是一种责任', svgType:'default',
+    desc:'你拥有这个圈层里最强烈的原则感与正义感。当你看到不公正的审判风气或错误的舆论走向时，你不会选择沉默，而是会以一种冷静、坚定的方式坚守并表达自己的立场。' },
+  { id:11, name:'「战略侦察情报员」', tagline:'知己知彼，方能在这场无声的战役中立于不败', svgType:'default',
+    desc:'你具备这个圈层里最强烈的战略意识与情报敏感度。你不仅仅是一个被动的信息接受者，更是一个主动的环境评估者。' },
+  { id:12, name:'「现实优先清醒派」', tagline:'追星是调味剂，现实才是主菜', svgType:'default',
+    desc:'你是这个圈层里最清醒、最具有现实主义精神的一批追星人。你清楚地知道追星在自己人生中的分量与位置，始终将现实生活放在首要位置。' }
+];
+
+function renderReportFromLocal() {
+  const axisMap = { E:[], D:[], A:[], R:[], N:[], C:[] };
+  userAnswers.forEach(a => axisMap[a.axis].push(a.score));
+
+  function norm(arr) {
+    if (!arr.length) return 50;
+    return Math.round(arr.reduce((s,v)=>s+v,0) / (arr.length * 3) * 100);
+  }
+
+  const E=norm(axisMap.E), D=norm(axisMap.D), A=norm(axisMap.A);
+  const R=norm(axisMap.R), N=norm(axisMap.N), C=norm(axisMap.C);
+
+  let id = 12;
+  if      (N>=70 && E>=70)   id=2;
+  else if (E>=70 && C>=70)   id=3;
+  else if (D>=70)            id=4;
+  else if (D>=55 && R<50)    id=5;
+  else if (R>=70)            id=6;
+  else if (C>=70)            id=7;
+  else if (N>=70 && C<40)    id=8;
+  else if (D>=55 && N>=55)   id=9;
+  else if (A<40  && N<40)    id=10;
+  else if (A>=70)            id=11;
+  else if (E<40)             id=1;
+
+  const arch = LOCAL_ARCHETYPES.find(a=>a.id===id) || LOCAL_ARCHETYPES[11];
+
+  reportArchetype.textContent   = arch.name;
+  reportTagline.textContent     = arch.tagline;
+  reportDescription.textContent = arch.desc;
+  reportSvgCard.innerHTML       = getSVG(arch.svgType);
+  apiStatusText.textContent     = '沙盒模式 · 本地状态机';
+
+  showReportScreen();
+  drawRadarChart(E, D, A, R, N, C);
+}
+
+// ─────────────────────────────────────────────────────────────
+// 11. 切换到结果页的共用动效
+// ─────────────────────────────────────────────────────────────
+function showReportScreen() {
+  loadingScreen.classList.add('fade-transition', 'fade-out');
+  setTimeout(() => {
+    loadingScreen.classList.add('hidden');
+    reportScreen.classList.remove('hidden');
+    reportScreen.classList.add('fade-in');
+  }, 400);
+}
+
+// ─────────────────────────────────────────────────────────────
+// 12. 雷达图（六顶点）
+// ─────────────────────────────────────────────────────────────
+function drawRadarChart(E, D, A, R, N, C) {
+  const ctx = document.getElementById('radarChart').getContext('2d');
+  if (radarChartInstance) radarChartInstance.destroy();
+
+  radarChartInstance = new Chart(ctx, {
+    type: 'radar',
+    data: {
+      labels: ['E 情感羁绊','D 独立解构','A 主动排查','R 坚守抗逆','N 发言防线','C 共鸣渴望'],
+      datasets: [{
+        data: [E, D, A, R, N, C],
+        backgroundColor: 'rgba(220,235,229,0.55)',
+        borderColor: '#8EA89D',
+        borderWidth: 2,
+        pointBackgroundColor: '#5C7A6D',
+        pointBorderColor: '#FAFAFA',
+        pointBorderWidth: 1.5,
+        pointRadius: 4,
+        pointHoverRadius: 6,
+        tension: 0.1
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          enabled: true,
+          backgroundColor: 'rgba(28,46,36,0.88)',
+          titleColor: '#FAFAFA',
+          bodyColor: '#DCEBE5',
+          displayColors: false,
+          padding: 8,
+          cornerRadius: 12,
+          callbacks: { label: ctx => `${ctx.parsed.r}%` }
+        }
+      },
+      scales: {
+        r: {
+          min: 0, max: 100,
+          ticks: { display: false, stepSize: 25 },
+          grid:       { color: 'rgba(142,168,157,0.15)' },
+          angleLines: { color: 'rgba(142,168,157,0.22)' },
+          pointLabels: {
+            color: '#1C2E24',
+            font: { family:"'Noto Sans SC','Outfit',sans-serif", size:9, weight:'600' }
+          }
+        }
+      }
+    }
+  });
+}
+
+// ─────────────────────────────────────────────────────────────
+// 13. ★ 核心通信层：POST /api/quiz/feedback
+// ─────────────────────────────────────────────────────────────
+let currentFeedbackType = null;
+
+function handleFeedbackBubble(type) {
+  currentFeedbackType = type;
+  document.querySelectorAll('.feedback-bubble').forEach(btn => {
+    btn.classList.remove('bg-[#DCEBE5]', 'border-[#5C7A6D]', 'shadow-sm');
+    btn.classList.add('bg-[#FAFAFA]', 'border-[#8EA89D]/40');
+  });
+  const target = type === 'accurate'
+    ? document.getElementById('fb-accurate')
+    : document.getElementById('fb-off');
+  if (target) {
+    target.classList.remove('bg-[#FAFAFA]', 'border-[#8EA89D]/40');
+    target.classList.add('bg-[#DCEBE5]', 'border-[#5C7A6D]', 'shadow-sm');
+  }
+}
+
+async function submitFeedback(type, text) {
+  const module  = document.getElementById('feedback-module');
+  const success = document.getElementById('fb-success');
+
+  if (!type && !text.trim()) {
+    showToast('请先选择一个气泡，或留下你的碎碎念 ✦');
+    return;
+  }
+
+  const body = {
+    user_uuid:     sessionUUID,          // ★ 与本次测评 UUID 保持一致
+    feedback_type: type  || 'none',
+    feedback_text: text.trim()
+  };
+
+  console.log('[Feedback] Submitting:', body);
+
+  try {
+    const res = await fetch(`${API_BASE}/feedback`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(body)
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    console.log('[Feedback] Accepted by server.');
+  } catch (err) {
+    // 反馈失败不阻断 UI，仅 console 记录
+    console.warn('[Feedback] Failed to reach server:', err);
+  }
+
+  // 无论网络成功与否，前端均执行淡出动效
+  const bubbleRow = module.querySelector('.flex.justify-center');
+  const inputRow  = module.querySelector('.flex.gap-2');
+  const titleText = module.querySelector('p.text-\\[10px\\]');
+
+  [bubbleRow, inputRow, titleText].forEach(el => {
+    if (!el) return;
+    el.style.transition = 'opacity 0.35s ease, transform 0.35s ease';
+    el.style.opacity    = '0';
+    el.style.transform  = 'translateY(-6px)';
+  });
+
+  setTimeout(() => {
+    [bubbleRow, inputRow, titleText].forEach(el => {
+      if (el) el.classList.add('hidden');
+    });
+    if (success) {
+      success.classList.remove('hidden');
+      requestAnimationFrame(() => {
+        success.style.transition = 'opacity 0.4s ease';
+        success.style.opacity    = '0';
+        requestAnimationFrame(() => { success.style.opacity = '1'; });
+      });
+    }
+  }, 380);
+}
+
+// ─────────────────────────────────────────────────────────────
+// 14. 重新测试
+// ─────────────────────────────────────────────────────────────
+function restartQuiz() {
+  reportScreen.classList.add('fade-out');
+  setTimeout(() => {
+    reportScreen.classList.add('hidden');
+    reportScreen.classList.remove('fade-out', 'fade-in');
+    if (radarChartInstance) { radarChartInstance.destroy(); radarChartInstance = null; }
+    currentQuestionIndex = 0;
+    userAnswers          = [];
+    currentFeedbackType  = null;
+    sessionUUID          = null; // 重置 UUID，下次开始时重新生成
+    quizScreen.classList.remove('hidden', 'fade-out');
+    startScreen.classList.remove('hidden', 'fade-out');
+    startScreen.classList.add('fade-in');
+  }, 400);
+}
+
+// ─────────────────────────────────────────────────────────────
+// 15. Toast
+// ─────────────────────────────────────────────────────────────
+function showToast(msg) {
+  toast.textContent = msg;
+  toast.classList.remove('opacity-0');
+  toast.classList.add('opacity-100');
+  setTimeout(() => {
+    toast.classList.remove('opacity-100');
+    toast.classList.add('opacity-0');
+  }, 2800);
+}
+</script>
+</body>
+</html>
