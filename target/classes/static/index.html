@@ -79,194 +79,195 @@
 </head>
 <body class="min-h-screen flex flex-col justify-between items-center p-4 md:p-8">
 
-  <!-- Header -->
-  <header class="w-full max-w-md text-center mt-4 mb-2">
+<!-- Header -->
+<header class="w-full max-w-md text-center mt-4 mb-2">
     <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-xs font-semibold tracking-wider uppercase bg-[#E9EFEB] text-[#345242]">
       Mental State Assessment · EDARNC
     </span>
-    <h1 class="text-2xl font-bold tracking-tight mt-2 text-[#1C2E24]">追星女孩精神状态测评</h1>
-  </header>
+  <h1 class="text-2xl font-bold tracking-tight mt-2 text-[#1C2E24]">追星女孩精神状态测评</h1>
+</header>
 
-  <main class="w-full max-w-md flex-1 flex flex-col justify-center my-4">
+<main class="w-full max-w-md flex-1 flex flex-col justify-center my-4">
 
-    <!-- ① START SCREEN -->
-    <div id="start-screen" class="fade-transition fade-in bg-white p-8 rounded-3xl glow-soft border border-slate-100 flex flex-col items-center text-center space-y-6">
-      <div class="w-20 h-20 rounded-full bg-[#E9EFEB] flex items-center justify-center text-[#1C2E24]">
-        <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
-          <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 21l8.982-5.563M18 10.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm-3 5.25a6 6 0 01-3.464-1.034 4.5 4.5 0 00-5.071-6.748 5.25 5.25 0 1110.114 0 4.5 4.5 0 00-5.071 6.748L15 15.375z"/>
+  <!-- ① START SCREEN -->
+  <div id="start-screen" class="fade-transition fade-in bg-white p-8 rounded-3xl glow-soft border border-slate-100 flex flex-col items-center text-center space-y-6">
+    <div class="w-20 h-20 rounded-full bg-[#E9EFEB] flex items-center justify-center text-[#1C2E24]">
+      <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+        <path stroke-linecap="round" stroke-linejoin="round" d="M9.813 15.904L9 21l8.982-5.563M18 10.125a3.375 3.375 0 11-6.75 0 3.375 3.375 0 016.75 0zm-3 5.25a6 6 0 01-3.464-1.034 4.5 4.5 0 00-5.071-6.748 5.25 5.25 0 1110.114 0 4.5 4.5 0 00-5.071 6.748L15 15.375z"/>
+      </svg>
+    </div>
+    <p class="text-[#5C6E66] text-sm leading-relaxed px-2">
+      冲浪千百遍，归来仍是局中人。<br>
+      本测评由六轨蓄水池矩阵算法驱动，客观解构你在舆论风向、空白期以及网络审判中的心智防御机制，生成专属 EDARNC 六维精神图谱。
+    </p>
+    <button id="btn-start" class="w-full py-4 bg-[#1C2E24] text-white rounded-2xl font-medium tracking-wide shadow-lg transition-all duration-300 active:scale-95">
+      开启心智探索（共 12 题）
+    </button>
+  </div>
+
+  <!-- ② QUIZ SCREEN -->
+  <div id="quiz-screen" class="hidden w-full space-y-5">
+    <div class="w-full flex items-center justify-between px-2 text-xs font-semibold text-[#5C6E66] tracking-wide">
+      <span id="progress-indicator">第 1 题 / 共 12 题</span>
+      <span id="progress-percent">8%</span>
+    </div>
+    <div class="w-full h-1.5 bg-[#E2EAE6] rounded-full overflow-hidden">
+      <div id="progress-bar-fill" class="progress-bar-fill h-full bg-[#8EA89D] rounded-full" style="width:8%"></div>
+    </div>
+    <div class="relative min-h-[420px] flex items-center justify-center">
+      <div id="question-card" class="fade-transition fade-in w-full bg-white p-7 rounded-3xl glow-soft border border-slate-100 flex flex-col space-y-5">
+        <div class="space-y-2">
+          <span id="q-category" class="inline-block text-[10px] font-bold tracking-widest text-[#8EA89D] uppercase"></span>
+          <h2 id="q-title" class="text-base font-bold leading-snug text-[#1C2E24]"></h2>
+        </div>
+        <div id="options-container" class="space-y-3"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ③ LOADING SCREEN -->
+  <div id="loading-screen" class="hidden bg-white p-10 rounded-3xl glow-soft border border-slate-100 flex flex-col items-center justify-center text-center space-y-8 min-h-[360px]">
+    <div class="relative w-16 h-16 flex items-center justify-center">
+      <div class="absolute inset-0 rounded-full border-[3px] border-[#E9EFEB]"></div>
+      <div class="absolute inset-0 rounded-full border-[3px] border-t-[#8EA89D] border-r-transparent border-b-transparent border-l-transparent animate-spin"></div>
+      <div class="w-8 h-8 rounded-full bg-[#1C2E24]/5 flex items-center justify-center text-[#1C2E24] pulse-animation">
+        <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
         </svg>
       </div>
-      <p class="text-[#5C6E66] text-sm leading-relaxed px-2">
-        冲浪千百遍，归来仍是局中人。<br>
-        本测评由六轨蓄水池矩阵算法驱动，客观解构你在舆论风向、空白期以及网络审判中的心智防御机制，生成专属 EDARNC 六维精神图谱。
+    </div>
+    <div class="space-y-3">
+      <h3 class="text-sm font-semibold tracking-wide text-[#1C2E24]">六轨蓄水池矩阵映射中...</h3>
+      <p class="text-xs text-[#8EA89D] leading-relaxed max-w-[240px] mx-auto animate-pulse">
+        正在生成你的 EDARNC 六维精神图谱，请稍候...
       </p>
-      <button id="btn-start" class="w-full py-4 bg-[#1C2E24] text-white rounded-2xl font-medium tracking-wide shadow-lg transition-all duration-300 active:scale-95">
-        开启心智探索（共 12 题）
-      </button>
+    </div>
+  </div>
+
+  <!-- ④ RESULT SCREEN -->
+  <div id="report-screen" class="hidden fade-transition fade-in w-full space-y-5">
+
+    <!-- Archetype Header -->
+    <div class="bg-white p-6 rounded-3xl glow-soft border border-slate-100 text-center space-y-1">
+      <span class="text-[10px] font-bold tracking-widest text-[#8EA89D] uppercase">Mental Profile · EDARNC Report</span>
+      <h2 id="report-archetype" class="text-2xl font-extrabold tracking-tight text-[#1C2E24] mt-1"></h2>
+      <p id="report-tagline" class="text-xs text-[#5C6E66]"></p>
     </div>
 
-    <!-- ② QUIZ SCREEN -->
-    <div id="quiz-screen" class="hidden w-full space-y-5">
-      <div class="w-full flex items-center justify-between px-2 text-xs font-semibold text-[#5C6E66] tracking-wide">
-        <span id="progress-indicator">第 1 题 / 共 12 题</span>
-        <span id="progress-percent">8%</span>
-      </div>
-      <div class="w-full h-1.5 bg-[#E2EAE6] rounded-full overflow-hidden">
-        <div id="progress-bar-fill" class="progress-bar-fill h-full bg-[#8EA89D] rounded-full" style="width:8%"></div>
-      </div>
-      <div class="relative min-h-[420px] flex items-center justify-center">
-        <div id="question-card" class="fade-transition fade-in w-full bg-white p-7 rounded-3xl glow-soft border border-slate-100 flex flex-col space-y-5">
-          <div class="space-y-2">
-            <span id="q-category" class="inline-block text-[10px] font-bold tracking-widest text-[#8EA89D] uppercase"></span>
-            <h2 id="q-title" class="text-base font-bold leading-snug text-[#1C2E24]"></h2>
-          </div>
-          <div id="options-container" class="space-y-3"></div>
-        </div>
-      </div>
-    </div>
+    <!-- SVG Illustration -->
+    <div id="report-svg-card" class="bg-white p-5 rounded-3xl glow-soft border border-slate-100 flex items-center justify-center"></div>
 
-    <!-- ③ LOADING SCREEN -->
-    <div id="loading-screen" class="hidden bg-white p-10 rounded-3xl glow-soft border border-slate-100 flex flex-col items-center justify-center text-center space-y-8 min-h-[360px]">
-      <div class="relative w-16 h-16 flex items-center justify-center">
-        <div class="absolute inset-0 rounded-full border-[3px] border-[#E9EFEB]"></div>
-        <div class="absolute inset-0 rounded-full border-[3px] border-t-[#8EA89D] border-r-transparent border-b-transparent border-l-transparent animate-spin"></div>
-        <div class="w-8 h-8 rounded-full bg-[#1C2E24]/5 flex items-center justify-center text-[#1C2E24] pulse-animation">
-          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/>
-          </svg>
-        </div>
+    <!-- Radar Chart -->
+    <div class="bg-white p-5 rounded-3xl glow-soft border border-slate-100 space-y-3">
+      <h4 class="text-[10px] font-bold tracking-wider text-[#8EA89D] uppercase text-center">六维精神防御图谱 (EDARNC)</h4>
+      <div class="relative w-full h-[220px] flex items-center justify-center">
+        <canvas id="radarChart"></canvas>
       </div>
-      <div class="space-y-3">
-        <h3 class="text-sm font-semibold tracking-wide text-[#1C2E24]">六轨蓄水池矩阵映射中...</h3>
-        <p class="text-xs text-[#8EA89D] leading-relaxed max-w-[240px] mx-auto animate-pulse">
-          正在生成你的 EDARNC 六维精神图谱，请稍候...
-        </p>
+      <div class="legend-grid mt-1 px-1">
+        <div class="flex items-center gap-1.5 text-[10px] text-[#5C6E66]"><span class="w-2 h-2 rounded-full bg-[#8EA89D] shrink-0"></span><span><b class="text-[#1C2E24]">E</b> 情感羁绊</span></div>
+        <div class="flex items-center gap-1.5 text-[10px] text-[#5C6E66]"><span class="w-2 h-2 rounded-full bg-[#8EA89D] shrink-0"></span><span><b class="text-[#1C2E24]">D</b> 独立解构</span></div>
+        <div class="flex items-center gap-1.5 text-[10px] text-[#5C6E66]"><span class="w-2 h-2 rounded-full bg-[#8EA89D] shrink-0"></span><span><b class="text-[#1C2E24]">A</b> 主动排查</span></div>
+        <div class="flex items-center gap-1.5 text-[10px] text-[#5C6E66]"><span class="w-2 h-2 rounded-full bg-[#8EA89D] shrink-0"></span><span><b class="text-[#1C2E24]">R</b> 坚守抗逆</span></div>
+        <div class="flex items-center gap-1.5 text-[10px] text-[#5C6E66]"><span class="w-2 h-2 rounded-full bg-[#8EA89D] shrink-0"></span><span><b class="text-[#1C2E24]">N</b> 发言防线</span></div>
+        <div class="flex items-center gap-1.5 text-[10px] text-[#5C6E66]"><span class="w-2 h-2 rounded-full bg-[#8EA89D] shrink-0"></span><span><b class="text-[#1C2E24]">C</b> 共鸣渴望</span></div>
       </div>
     </div>
 
-    <!-- ④ RESULT SCREEN -->
-    <div id="report-screen" class="hidden fade-transition fade-in w-full space-y-5">
+    <!-- Analysis -->
+    <div class="bg-white p-5 rounded-3xl glow-soft border border-slate-100 space-y-3">
+      <h4 class="text-xs font-bold text-[#1C2E24] flex items-center gap-1.5">
+        <svg class="w-3.5 h-3.5 text-[#8EA89D]" fill="currentColor" viewBox="0 0 20 20">
+          <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
+        </svg>
+        灵魂解构
+      </h4>
+      <p id="report-description" class="text-xs text-[#5C6E66] leading-relaxed whitespace-pre-line"></p>
+    </div>
 
-      <!-- Archetype Header -->
-      <div class="bg-white p-6 rounded-3xl glow-soft border border-slate-100 text-center space-y-1">
-        <span class="text-[10px] font-bold tracking-widest text-[#8EA89D] uppercase">Mental Profile · EDARNC Report</span>
-        <h2 id="report-archetype" class="text-2xl font-extrabold tracking-tight text-[#1C2E24] mt-1"></h2>
-        <p id="report-tagline" class="text-xs text-[#5C6E66]"></p>
-      </div>
-
-      <!-- SVG Illustration -->
-      <div id="report-svg-card" class="bg-white p-5 rounded-3xl glow-soft border border-slate-100 flex items-center justify-center"></div>
-
-      <!-- Radar Chart -->
-      <div class="bg-white p-5 rounded-3xl glow-soft border border-slate-100 space-y-3">
-        <h4 class="text-[10px] font-bold tracking-wider text-[#8EA89D] uppercase text-center">六维精神防御图谱 (EDARNC)</h4>
-        <div class="relative w-full h-[220px] flex items-center justify-center">
-          <canvas id="radarChart"></canvas>
-        </div>
-        <div class="legend-grid mt-1 px-1">
-          <div class="flex items-center gap-1.5 text-[10px] text-[#5C6E66]"><span class="w-2 h-2 rounded-full bg-[#8EA89D] shrink-0"></span><span><b class="text-[#1C2E24]">E</b> 情感羁绊</span></div>
-          <div class="flex items-center gap-1.5 text-[10px] text-[#5C6E66]"><span class="w-2 h-2 rounded-full bg-[#8EA89D] shrink-0"></span><span><b class="text-[#1C2E24]">D</b> 独立解构</span></div>
-          <div class="flex items-center gap-1.5 text-[10px] text-[#5C6E66]"><span class="w-2 h-2 rounded-full bg-[#8EA89D] shrink-0"></span><span><b class="text-[#1C2E24]">A</b> 主动排查</span></div>
-          <div class="flex items-center gap-1.5 text-[10px] text-[#5C6E66]"><span class="w-2 h-2 rounded-full bg-[#8EA89D] shrink-0"></span><span><b class="text-[#1C2E24]">R</b> 坚守抗逆</span></div>
-          <div class="flex items-center gap-1.5 text-[10px] text-[#5C6E66]"><span class="w-2 h-2 rounded-full bg-[#8EA89D] shrink-0"></span><span><b class="text-[#1C2E24]">N</b> 发言防线</span></div>
-          <div class="flex items-center gap-1.5 text-[10px] text-[#5C6E66]"><span class="w-2 h-2 rounded-full bg-[#8EA89D] shrink-0"></span><span><b class="text-[#1C2E24]">C</b> 共鸣渴望</span></div>
-        </div>
-      </div>
-
-      <!-- Analysis -->
-      <div class="bg-white p-5 rounded-3xl glow-soft border border-slate-100 space-y-3">
-        <h4 class="text-xs font-bold text-[#1C2E24] flex items-center gap-1.5">
-          <svg class="w-3.5 h-3.5 text-[#8EA89D]" fill="currentColor" viewBox="0 0 20 20">
-            <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd"/>
-          </svg>
-          灵魂解构
-        </h4>
-        <p id="report-description" class="text-xs text-[#5C6E66] leading-relaxed whitespace-pre-line"></p>
-      </div>
-
-      <!-- API Status -->
-      <div class="p-3 bg-[#E9EFEB] text-[#345242] rounded-xl text-[11px] flex items-center justify-between">
+    <!-- API Status -->
+    <div class="p-3 bg-[#E9EFEB] text-[#345242] rounded-xl text-[11px] flex items-center justify-between">
         <span class="font-medium flex items-center gap-1">
           <span class="w-1.5 h-1.5 rounded-full bg-[#8EA89D] inline-block animate-ping"></span>
           数据接口同步就绪
         </span>
-        <span id="api-status-text" class="opacity-70 font-mono text-[10px]">Payload: []</span>
-      </div>
-
-      <!-- Buttons -->
-
-<!-- ★ 反馈模块 ── 插在按钮组 div 正上方 -->
-<div id="feedback-module" class="bg-white p-5 rounded-3xl glow-soft border border-slate-100 space-y-4 fade-transition fade-in">
-
-  <!-- 标题 -->
-  <p class="text-[10px] font-bold tracking-widest text-[#8EA89D] uppercase text-center">
-    这份诊断卡 · 准确吗？
-  </p>
-
-  <!-- 气泡按钮组 -->
-  <div class="flex justify-center gap-4">
-    <button
-      id="fb-accurate"
-      onclick="handleFeedbackBubble('accurate')"
-      class="feedback-bubble flex flex-col items-center gap-1.5 px-5 py-3 rounded-2xl border border-[#8EA89D]/40 bg-[#FAFAFA] text-[#1C2E24] text-xs font-medium transition-all duration-200 active:scale-95"
-    >
-      <span class="text-xl">🌲</span>
-      <span>精准看穿</span>
-    </button>
-    <button
-      id="fb-off"
-      onclick="handleFeedbackBubble('off')"
-      class="feedback-bubble flex flex-col items-center gap-1.5 px-5 py-3 rounded-2xl border border-[#8EA89D]/40 bg-[#FAFAFA] text-[#1C2E24] text-xs font-medium transition-all duration-200 active:scale-95"
-    >
-      <span class="text-xl">🌧️</span>
-      <span>有些偏差</span>
-    </button>
-  </div>
-
-  <!-- 文字输入行 -->
-  <div class="flex gap-2 items-center">
-    <input
-      id="fb-text"
-      type="text"
-      maxlength="100"
-      placeholder="在这里留下你的追星碎碎念或反馈吧..."
-      class="flex-1 px-3 py-2.5 text-xs rounded-xl border border-[#E2EAE6] bg-[#FAFAFA] text-[#1C2E24] placeholder-[#B0BFB8] outline-none focus:border-[#8EA89D] transition-colors duration-200"
-    />
-    <button
-      onclick="submitFeedback(currentFeedbackType, document.getElementById('fb-text').value)"
-      class="px-4 py-2.5 bg-[#1C2E24] text-white text-xs font-medium rounded-xl active:scale-95 transition-transform shrink-0"
-    >
-      提交
-    </button>
-  </div>
-
-  <!-- 成功提示（默认隐藏） -->
-  <p id="fb-success" class="hidden text-center text-xs text-[#5C7A6D] font-medium py-1 fade-transition">
-    收到啦，感谢你和我在同一个时空共鸣。
-  </p>
-
-</div>
-<!-- ★ 反馈模块结束 -->
-      <div class="grid grid-cols-2 gap-3 pb-4">
-        <button id="btn-restart" class="py-3 px-4 bg-[#FAFAFA] text-[#1C2E24] border border-[#E2EAE6] rounded-xl text-xs font-medium tracking-wide active:scale-95 transition-transform">
-          重新测试
-        </button>
-        <button id="btn-save" class="py-3 px-4 bg-[#1C2E24] text-white rounded-xl text-xs font-medium tracking-wide flex items-center justify-center gap-1.5 active:scale-95 transition-transform">
-          <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-            <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
-          </svg>
-          保存诊断卡
-        </button>
-      </div>
+      <span id="api-status-text" class="opacity-70 font-mono text-[10px]">Payload: []</span>
     </div>
 
-  </main>
+    <!-- Buttons -->
 
-  <footer class="w-full text-center text-[10px] text-[#8EA89D] font-medium tracking-wider mb-2 mt-2">
-    POWERED BY RESERVOIR ALGORITHM · EDARNC v1.0 &copy; 2026
-  </footer>
+    <!-- ★ 反馈模块 ── 插在按钮组 div 正上方 -->
+    <div id="feedback-module" class="bg-white p-5 rounded-3xl glow-soft border border-slate-100 space-y-4 fade-transition fade-in">
 
-  <div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 px-4 py-2.5 bg-black/80 backdrop-blur-md text-white rounded-full text-xs font-medium tracking-wide opacity-0 transition-opacity duration-300 pointer-events-none z-50">提示</div>
+      <!-- 标题 -->
+      <p class="text-[10px] font-bold tracking-widest text-[#8EA89D] uppercase text-center">
+        这份诊断卡 · 准确吗？
+      </p>
+
+      <!-- 气泡按钮组 -->
+      <div class="flex justify-center gap-4">
+        <button
+                id="fb-accurate"
+                onclick="handleFeedbackBubble('accurate')"
+                class="feedback-bubble flex flex-col items-center gap-1.5 px-5 py-3 rounded-2xl border border-[#8EA89D]/40 bg-[#FAFAFA] text-[#1C2E24] text-xs font-medium transition-all duration-200 active:scale-95"
+        >
+          <span class="text-xl">🌲</span>
+          <span>精准看穿</span>
+        </button>
+        <button
+                id="fb-off"
+                onclick="handleFeedbackBubble('off')"
+                class="feedback-bubble flex flex-col items-center gap-1.5 px-5 py-3 rounded-2xl border border-[#8EA89D]/40 bg-[#FAFAFA] text-[#1C2E24] text-xs font-medium transition-all duration-200 active:scale-95"
+        >
+          <span class="text-xl">🌧️</span>
+          <span>有些偏差</span>
+        </button>
+      </div>
+
+      <!-- 文字输入行 -->
+      <div class="flex gap-2 items-center">
+        <input
+                id="fb-text"
+                type="text"
+                maxlength="100"
+                placeholder="在这里留下你的追星碎碎念或反馈吧..."
+                class="flex-1 px-3 py-2.5 text-xs rounded-xl border border-[#E2EAE6] bg-[#FAFAFA] text-[#1C2E24] placeholder-[#B0BFB8] outline-none focus:border-[#8EA89D] transition-colors duration-200"
+        />
+        <button
+                onclick="submitFeedback(currentFeedbackType, document.getElementById('fb-text').value)"
+                class="px-4 py-2.5 bg-[#1C2E24] text-white text-xs font-medium rounded-xl active:scale-95 transition-transform shrink-0"
+        >
+          提交
+        </button>
+      </div>
+
+      <!-- 成功提示（默认隐藏） -->
+      <p id="fb-success" class="hidden text-center text-xs text-[#5C7A6D] font-medium py-1 fade-transition">
+        收到啦，感谢你和我在同一个时空共鸣。
+      </p>
+
+    </div>
+    <!-- ★ 反馈模块结束 -->
+    <div class="grid grid-cols-2 gap-3 pb-4">
+      <button id="btn-restart" class="py-3 px-4 bg-[#FAFAFA] text-[#1C2E24] border border-[#E2EAE6] rounded-xl text-xs font-medium tracking-wide active:scale-95 transition-transform">
+        重新测试
+      </button>
+      <button id="btn-save" class="py-3 px-4 bg-[#1C2E24] text-white rounded-xl text-xs font-medium tracking-wide flex items-center justify-center gap-1.5 active:scale-95 transition-transform">
+        <svg class="w-3.5 h-3.5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4"/>
+        </svg>
+        保存诊断卡
+      </button>
+    </div>
+  </div>
+
+</main>
+
+<footer class="w-full text-center text-[10px] text-[#8EA89D] font-medium tracking-wider mb-2 mt-2">
+  POWERED BY RESERVOIR ALGORITHM · EDARNC v1.0 &copy; 2026
+</footer>
+
+<div id="toast" class="fixed bottom-6 left-1/2 -translate-x-1/2 px-4 py-2.5 bg-black/80 backdrop-blur-md text-white rounded-full text-xs font-medium tracking-wide opacity-0 transition-opacity duration-300 pointer-events-none z-50">提示</div>
+
 
 <script>
 // ═══════════════════════════════════════════════════════════════
@@ -588,66 +589,47 @@ function showLoadingAndSubmit() {
 // ─────────────────────────────────────────────────────────────
 // 8. ★ 核心通信层：POST /api/quiz/submit
 // ─────────────────────────────────────────────────────────────
-// ✨ 极客主设计师专属：全栈联动 + 离线单机双通道自适应提交逻辑
 async function submitAnswers() {
-    // 1. 获取或生成用户在前端的唯一特征码 (UUID)
-    const userUuid = localStorage.getItem('user_uuid') || crypto.randomUUID();
-    localStorage.setItem('user_uuid', userUuid);
+  // 拆分数字分值数组 & 字母轨迹数组
+  const answersPayload = userAnswers.map(a => a.score);
+  const optionsPayload = userAnswers.map(a => a.key);
 
-    // 精准对齐你原本的 userAnswers 变量名
-    const answersPayload = userAnswers.map(a => a.score);
-    const optionsPayload = userAnswers.map(a => a.key);
+  const body = {
+    user_uuid:     sessionUUID,
+    answers:       answersPayload,       // [1, 3, 2, 1, ...]
+    options:       optionsPayload,       // ["A", "C", "B", ...]
+    feedback_type: 'none',              // 反馈初始为 none，用户后续单独提交
+    feedback_text: ''
+  };
 
-    // ── 🛠️ 备用通道：离线单机版计算大脑（关机或断网时自动触发） ────────
-    const runLocalFallback = () => {
-        console.warn("⚠️ 远程Java城堡已断电，正在启动前端单机版大脑为您算分...");
+  // 更新 API 状态标识
+  apiStatusText.textContent = `UUID: ${sessionUUID.slice(0, 8)}...`;
 
-        // 简易六维轴判定逻辑（和后端状态机算法严格对齐）
-        const axisMap = ["E", "D", "N", "E", "C", "R", "A", "D", "N", "C", "A", "R"];
-        const axisScores = { E:[], D:[], A:[], R:[], N:[], C:[] };
-        answersPayload.forEach((score, i) => { axisMap[i] && axisScores[axisMap[i]].push(score); });
+  console.log('[Quiz] Submitting payload:', body);
 
-        const edarnc = {};
-        Object.keys(axisScores).forEach(axis => {
-            const arr = axisScores[axis];
-            edarnc[axis] = arr.length ? Math.round(arr.reduce((a,b)=>a+b,0) / (arr.length * 3) * 100) : 50;
-        });
+  try {
+    const res = await fetch(`${API_BASE}/submit`, {
+      method:  'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body:    JSON.stringify(body)
+    });
 
-        // 触发你的备用经典追星人格结果文案
-        const fallbackArchetype = {
-            id: 7,
-            name: "「共鸣猎手连接者」",
-            tagline: "在茫茫人海中，寻找那个频率完全相同的灵魂",
-            description: "这是由前端单机芯片为您计算出的结果。触发这个结果的你，对高质量的智识共鸣有着近乎本能的渴望与敏锐嗅觉..."
-        };
-
-        // 渲染前端结果页
-        showResultPage({ edarnc, archetype: fallbackArchetype, user_uuid: userUuid });
-    };
-
-    // ── 🚀 主通道：全力轰击你的免安装原生 SSH 隧道 ──────────────────────
-    // 💡 已经将你的最新专属公网网址完美注入
-const tunnelUrl = "https://469e5a5d4794f6.lhr.life";
-
-    try {
-        const response = await fetch(`${tunnelUrl}/api/quiz/submit`, {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ user_uuid: userUuid, answers: answersPayload, options: optionsPayload })
-        });
-
-        if (response.ok) {
-            const data = await response.json();
-            console.log("🎯 成功连通公网Java大脑！数据已安全落盘MySQL！", data);
-            showResultPage(data); // 使用后端状态机精准渲染
-        } else {
-            // 服务器返回非200（比如500报错），切回单机离线版
-            runLocalFallback();
-        }
-    } catch (error) {
-        // 网络不通或者你关电脑了，直接无缝切回单机离线版，绝不弹窗报错！
-        runLocalFallback();
+    if (!res.ok) {
+      throw new Error(`HTTP ${res.status}: ${res.statusText}`);
     }
+
+    const data = await res.json();
+    console.log('[Quiz] Backend response:', data);
+
+    // ★ 使用后端返回的人格数据渲染结果页
+    renderReportFromServer(data);
+
+  } catch (err) {
+    console.warn('[Quiz] Backend unreachable, falling back to local scoring.', err);
+    showToast('沙盒模式：后端未连接，使用本地状态机');
+    // 降级：本地计算（保证离线也可用）
+    renderReportFromLocal();
+  }
 }
 
 // ─────────────────────────────────────────────────────────────
